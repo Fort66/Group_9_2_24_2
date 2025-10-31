@@ -6,7 +6,7 @@ from pygame.display import set_mode, set_caption
 
 from icecream import ic
 
-from random import choice
+from random import choice, randint
 
 pg.init()
 
@@ -26,18 +26,19 @@ class Player:
         self.image.fill('SteelBlue')
         self.rect = self.image.get_rect()
         self.rect.center = [screen.get_width() // 2, screen.get_height() // 2]
+        self.speed = 5
 
     def move(self):
         keys = pg.key.get_pressed()
 
         if keys[K_w]:
-            self.rect.move_ip(0, -10)
+            self.rect.move_ip(0, -self.speed)
         if keys[K_s]:
-            self.rect.move_ip(0, 10)
+            self.rect.move_ip(0, self.speed)
         if keys[K_a]:
-            self.rect.move_ip(-10, 0)
+            self.rect.move_ip(-self.speed, 0)
         if keys[K_d]:
-            self.rect.move_ip(10, 0)
+            self.rect.move_ip(self.speed, 0)
 
     def check_position(self):
         if self.rect.left <= 0:
@@ -54,12 +55,39 @@ class Player:
 
 
     def update(self):
-        screen.blit(player.image, player.rect)
-        self.check_position()
         self.move()
+        self.check_position()
+        screen.blit(self.image, self.rect)
+
+
+class Ball:
+    def __init__(self):
+        self.image = pg.Surface([25, 25])
+        self.image.fill('DarkGreen')
+        self.rect = self.image.get_rect(center = ((randint(screen.get_width(), screen.get_width() + 500)), (randint(0, screen.get_height()))))
+        self.speed = 10
+
+    def move(self):
+        self.rect.move_ip(-self.speed, 0)
+
+    def check_position(self):
+        if self.rect.left <= -30:
+            self.rect = self.image.get_rect(center = ((randint(screen.get_width(), screen.get_width() + 500)), (randint(0, screen.get_height()))))
+
+    def update(self):
+        self.move()
+        self.check_position()
+        screen.blit(self.image, self.rect)
+
+
 
 
 player = Player()
+
+balls = []
+
+for i in range(10):
+    balls.append(Ball())
 
 
 loop = True
@@ -72,6 +100,8 @@ while loop:
             loop = False
 
     player.update()
+    for ball in balls:
+        ball.update()
 
     pg.display.update()
     clock.tick(fps)
