@@ -6,7 +6,7 @@ from pygame.display import set_mode, set_caption
 
 from icecream import ic
 
-from random import choice, randint
+from random import choice, uniform
 
 pg.init()
 
@@ -64,15 +64,21 @@ class Ball:
     def __init__(self):
         self.image = pg.Surface([25, 25])
         self.image.fill('DarkGreen')
-        self.rect = self.image.get_rect(center = ((randint(screen.get_width(), screen.get_width() + 500)), (randint(0, screen.get_height()))))
+        self.generator()
         self.speed = 10
+
+    def generator(self):
+        self.rect = self.image.get_rect(center=(
+            uniform(screen.get_width(), screen.get_width() + 1000),
+            uniform(0, screen.get_height()
+            )))
 
     def move(self):
         self.rect.move_ip(-self.speed, 0)
 
     def check_position(self):
         if self.rect.left <= -30:
-            self.rect = self.image.get_rect(center = ((randint(screen.get_width(), screen.get_width() + 500)), (randint(0, screen.get_height()))))
+            self.generator()
 
     def update(self):
         self.move()
